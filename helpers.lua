@@ -2,6 +2,7 @@ local _, NS = ...
 
 local LibStub = LibStub
 local IsInRaid = IsInRaid
+local IsInGroup = IsInGroup
 local UnitInRange = UnitInRange
 local GetNumGroupMembers = GetNumGroupMembers
 local GetNumSubgroupMembers = GetNumSubgroupMembers
@@ -10,6 +11,10 @@ local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 local sformat = string.format
 
 local LSM = LibStub("LibSharedMedia-3.0")
+
+NS.isInGroup = function()
+  return IsInRaid() or IsInGroup()
+end
 
 -- Function to assist iterating group members whether in a party or raid.
 NS.IterateGroupMembers = function(reversed, forceParty)

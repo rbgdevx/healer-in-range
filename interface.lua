@@ -1,8 +1,6 @@
 local AddonName, NS = ...
 
 local CreateFrame = CreateFrame
-local IsInRaid = IsInRaid
-local IsInGroup = IsInGroup
 local LibStub = LibStub
 
 local Interface = {}
@@ -81,15 +79,22 @@ function Interface:CreateInterface()
 
     TextFrame:SetWidth(Text:GetStringWidth())
     TextFrame:SetHeight(Text:GetStringHeight())
-    TextFrame:Hide()
 
-    local inRange = NS.isHealerInRange()
-    NS.ToggleVisibility(inRange, HIR.db.global.reverse)
+    if NS.isInGroup() then
+      local inRange = NS.isHealerInRange()
+      NS.ToggleVisibility(inRange, HIR.db.global.reverse)
+    else
+      if HIR.db.global.test then
+        TextFrame:Show()
+      else
+        TextFrame:Hide()
+      end
+    end
   end
 end
 
 function Interface:ShowText(value)
-  if IsInRaid() or IsInGroup() then
+  if NS.isInGroup() then
     if value then
       Interface.textFrame:Show()
     else

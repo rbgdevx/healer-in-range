@@ -1,9 +1,8 @@
 ## Interface: 100200
 ## Title: HealerInRange
-## Version: 1.0.1
+## Version: 1.0.2
 ## Author: Ajax
-## Notes: Shows text if you're in range of a healer
-## X-Flavor: Mainline
+## Notes: Shows text if you're in or out of range of a healer
 ## X-Category: Battlegrounds/PvP
 ## X-Credits: Ajax
 ## X-License: All Rights Reserved

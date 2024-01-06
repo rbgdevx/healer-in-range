@@ -3,6 +3,7 @@ local _, NS = ...
 NS.DefaultDatabase = {
   ["global"] = {
     ["lock"] = false,
+    ["test"] = true,
     ["reverse"] = false,
     ["fontsize"] = 30,
     ["font"] = "Friz Quadrata TT",

@@ -4,8 +4,6 @@ local Interface = NS.Interface
 
 local LibStub = LibStub
 local CreateFrame = CreateFrame
-local IsInRaid = IsInRaid
-local IsInGroup = IsInGroup
 
 HIR = LibStub("AceAddon-3.0"):NewAddon("HIR", "AceEvent-3.0")
 
@@ -46,7 +44,7 @@ do
 
     NS.ToggleVisibility(inRange, HIR.db.global.reverse)
 
-    if IsInRaid() or IsInGroup() then
+    if NS.isInGroup() then
       healerInRangeFrame:SetScript("OnUpdate", InRangeChecker)
     else
       healerInRangeFrame:SetScript("OnUpdate", nil)
@@ -60,7 +58,7 @@ do
 end
 
 function HIR:PLAYER_ENTERING_WORLD()
-  if IsInRaid() or IsInGroup() then
+  if NS.isInGroup() then
     self:CheckForHealerInRange()
   end
 

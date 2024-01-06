@@ -24,6 +24,25 @@ NS.AceConfig = {
         return HIR.db.global.lock
       end,
     },
+    test = {
+      name = "Toggle on to test settings (out of group)",
+      desc = "Only works outside of a group.",
+      type = "toggle",
+      width = "double",
+      set = function(_, val)
+        HIR.db.global.test = val
+        if NS.isInGroup() == false then
+          if val then
+            NS.Interface.textFrame:Show()
+          else
+            NS.Interface.textFrame:Hide()
+          end
+        end
+      end,
+      get = function(_)
+        return HIR.db.global.test
+      end,
+    },
     reverse = {
       name = "Show Healer out of range instead",
       type = "toggle",
@@ -33,8 +52,10 @@ NS.AceConfig = {
         -- false = show in range
         HIR.db.global.reverse = val
         NS.UpdateText(NS.Interface.text, val)
-        local inRange = NS.isHealerInRange()
-        NS.ToggleVisibility(inRange, val)
+        if NS.isInGroup() then
+          local inRange = NS.isHealerInRange()
+          NS.ToggleVisibility(inRange, val)
+        end
       end,
       get = function(_)
         return HIR.db.global.reverse
