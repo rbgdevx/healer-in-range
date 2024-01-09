@@ -14,15 +14,19 @@ function Interface:MakeMoveable(frame)
   frame:SetMovable(true)
   frame:RegisterForDrag("LeftButton")
   frame:SetScript("OnDragStart", function(f)
-    f:StartMoving()
+    if HIR.db.global.lock == false then
+      f:StartMoving()
+    end
   end)
   frame:SetScript("OnDragStop", function(f)
-    f:StopMovingOrSizing()
-    local a, _, b, c, d = f:GetPoint()
-    HIR.db.global.position[1] = a
-    HIR.db.global.position[2] = b
-    HIR.db.global.position[3] = c
-    HIR.db.global.position[4] = d
+    if HIR.db.global.lock == false then
+      f:StopMovingOrSizing()
+      local a, _, b, c, d = f:GetPoint()
+      HIR.db.global.position[1] = a
+      HIR.db.global.position[2] = b
+      HIR.db.global.position[3] = c
+      HIR.db.global.position[4] = d
+    end
   end)
 end
 
@@ -61,8 +65,6 @@ function Interface:CreateInterface()
       HIR.db.global.position[4]
     )
 
-    self:AddControls(TextFrame)
-
     local Text = TextFrame:CreateFontString(nil, "OVERLAY")
     Text:SetTextColor(HIR.db.global.color.r, HIR.db.global.color.g, HIR.db.global.color.b, HIR.db.global.color.a)
     Text:SetShadowOffset(0, 0)
@@ -76,6 +78,8 @@ function Interface:CreateInterface()
 
     Interface.text = Text
     Interface.textFrame = TextFrame
+
+    self:AddControls(Interface.textFrame)
 
     TextFrame:SetWidth(Text:GetStringWidth())
     TextFrame:SetHeight(Text:GetStringHeight())

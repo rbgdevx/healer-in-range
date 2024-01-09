@@ -1,11 +1,11 @@
-local _, NS = ...
+local AddonName, NS = ...
 
 local Interface = NS.Interface
 
 local LibStub = LibStub
 local CreateFrame = CreateFrame
 
-HIR = LibStub("AceAddon-3.0"):NewAddon("HIR", "AceEvent-3.0")
+HIR = LibStub("AceAddon-3.0"):NewAddon("HIR", "AceEvent-3.0", "AceConsole-3.0")
 
 -- Range Checker
 do
@@ -65,13 +65,18 @@ function HIR:PLAYER_ENTERING_WORLD()
   self:RegisterEvent("GROUP_ROSTER_UPDATE")
 end
 
+function RaidFadeEvenMore:SlashCommands(_)
+  LibStub("AceConfigDialog-3.0"):Open(AddonName)
+end
+
 function HIR:OnInitialize()
   self.db = LibStub("AceDB-3.0"):New("HIRDB", NS.DefaultDatabase, true)
   self:SetupOptions()
+  self:RegisterChatCommand(AddonName, "SlashCommands")
+  self:RegisterChatCommand("hir", "SlashCommands")
 end
 
 function HIR:OnEnable()
   Interface:CreateInterface()
-
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
