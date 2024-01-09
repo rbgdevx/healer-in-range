@@ -65,7 +65,7 @@ function HIR:PLAYER_ENTERING_WORLD()
   self:RegisterEvent("GROUP_ROSTER_UPDATE")
 end
 
-function RaidFadeEvenMore:SlashCommands(_)
+function HIR:SlashCommands(_)
   LibStub("AceConfigDialog-3.0"):Open(AddonName)
 end
 
