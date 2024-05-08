@@ -1,5 +1,9 @@
 # Healer In Range
 
+## [v1.0.6](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.0.6) (2024-05-08)
+
+- update toc
+
 ## [v1.0.5](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.0.5) (2024-05-08)
 
 - Fixing 10.2.7 bugs for incorrect setting of text justification
