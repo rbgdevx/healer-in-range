@@ -1,6 +1,6 @@
-## Interface: 100200
+## Interface: 100207
 ## Title: HealerInRange
-## Version: 1.0.3
+## Version: 1.0.4
 ## Author: Ajax
 ## Notes: Shows text if you're in or out of range of a healer
 ## OptionalDeps: Ace3, LibStub, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets
