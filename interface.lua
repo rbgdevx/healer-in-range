@@ -14,18 +14,18 @@ function Interface:MakeMoveable(frame)
   frame:SetMovable(true)
   frame:RegisterForDrag("LeftButton")
   frame:SetScript("OnDragStart", function(f)
-    if HIR.db.global.lock == false then
+    if NS.db.global.lock == false then
       f:StartMoving()
     end
   end)
   frame:SetScript("OnDragStop", function(f)
-    if HIR.db.global.lock == false then
+    if NS.db.global.lock == false then
       f:StopMovingOrSizing()
       local a, _, b, c, d = f:GetPoint()
-      HIR.db.global.position[1] = a
-      HIR.db.global.position[2] = b
-      HIR.db.global.position[3] = c
-      HIR.db.global.position[4] = d
+      NS.db.global.position[1] = a
+      NS.db.global.position[2] = b
+      NS.db.global.position[3] = c
+      NS.db.global.position[4] = d
     end
   end)
 end
@@ -41,12 +41,14 @@ end
 function Interface:AddControls(frame)
   frame:EnableMouse(true)
   frame:SetScript("OnMouseUp", function(_, btn)
-    if btn == "RightButton" then
-      LibStub("AceConfigDialog-3.0"):Open(AddonName)
+    if NS.db.global.lock == false then
+      if btn == "RightButton" then
+        LibStub("AceConfigDialog-3.0"):Open(AddonName)
+      end
     end
   end)
 
-  if HIR.db.global.lock then
+  if NS.db.global.lock then
     self:StopMovement(frame)
   else
     self:MakeMoveable(frame)
@@ -58,15 +60,15 @@ function Interface:CreateInterface()
     local TextFrame = CreateFrame("Frame", "HIRInterfaceTextFrame", UIParent)
     TextFrame:SetClampedToScreen(true)
     TextFrame:SetPoint(
-      HIR.db.global.position[1],
+      NS.db.global.position[1],
       UIParent,
-      HIR.db.global.position[2],
-      HIR.db.global.position[3],
-      HIR.db.global.position[4]
+      NS.db.global.position[2],
+      NS.db.global.position[3],
+      NS.db.global.position[4]
     )
 
     local Text = TextFrame:CreateFontString(nil, "OVERLAY")
-    Text:SetTextColor(HIR.db.global.color.r, HIR.db.global.color.g, HIR.db.global.color.b, HIR.db.global.color.a)
+    Text:SetTextColor(NS.db.global.color.r, NS.db.global.color.g, NS.db.global.color.b, NS.db.global.color.a)
     Text:SetShadowOffset(0, 0)
     Text:SetShadowColor(0, 0, 0, 1)
     Text:SetJustifyH("CENTER")
@@ -74,7 +76,7 @@ function Interface:CreateInterface()
     Text:SetPoint("CENTER", TextFrame, "CENTER", 0, 0)
 
     NS.UpdateFont(Text)
-    NS.UpdateText(Text, HIR.db.global.reverse)
+    NS.UpdateText(Text, NS.db.global.reverse)
 
     Interface.text = Text
     Interface.textFrame = TextFrame
@@ -86,13 +88,23 @@ function Interface:CreateInterface()
 
     if NS.isInGroup() then
       local inRange = NS.isHealerInRange()
-      NS.ToggleVisibility(inRange, HIR.db.global.reverse)
+      NS.ToggleVisibility(inRange, NS.db.global.reverse)
     else
-      if HIR.db.global.test then
+      if NS.db.global.test then
         TextFrame:Show()
       else
         TextFrame:Hide()
       end
+    end
+
+    if NS.db.global.healer then
+      if NS.isInGroup() and NS.isHealer("player") then
+        TextFrame:SetAlpha(0)
+      else
+        TextFrame:SetAlpha(1)
+      end
+    else
+      TextFrame:SetAlpha(1)
     end
   end
 end
@@ -101,10 +113,29 @@ function Interface:ShowText(value)
   if NS.isInGroup() then
     if value then
       Interface.textFrame:Show()
+
+      if NS.isDead() then
+        Interface.textFrame:SetAlpha(0)
+      else
+        if NS.db.global.healer then
+          if NS.isHealer("player") then
+            Interface.textFrame:SetAlpha(0)
+          else
+            Interface.textFrame:SetAlpha(1)
+          end
+        else
+          Interface.textFrame:SetAlpha(1)
+        end
+      end
     else
       Interface.textFrame:Hide()
     end
   else
-    Interface.textFrame:Hide()
+    if NS.db.global.test then
+      Interface.textFrame:Show()
+      Interface.textFrame:SetAlpha(1)
+    else
+      Interface.textFrame:Hide()
+    end
   end
 end

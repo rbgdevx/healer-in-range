@@ -1,5 +1,11 @@
 # Healer In Range
 
+## [v1.1.0](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.0) (2024-09-06)
+
+- Refactor lib usage to match what im doing on BGWC addon to reduce needed libs and global db issues
+- Made it so you can't open the settings when locked and right clicking the text
+- Minor random changes based on learning from BGWC
+
 ## [v1.0.6](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.0.6) (2024-05-08)
 
 - update toc

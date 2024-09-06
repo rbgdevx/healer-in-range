@@ -1,16 +1,18 @@
-local AddonName, NS = ...
+local _, NS = ...
 
 local Interface = NS.Interface
 
-local LibStub = LibStub
 local CreateFrame = CreateFrame
 
-HIR = LibStub("AceAddon-3.0"):NewAddon("HIR", "AceEvent-3.0", "AceConsole-3.0")
+---@type HIR
+local HIR = NS.HIR
+local HIRFrame = NS.HIR.frame
 
 -- Range Checker
 do
   --- @class HealerInRangeFrame
   --- @field inRange boolean|nil
+  --- @field SetScript fun(scriptType: string, handler: function|nil)
 
   --- @type HealerInRangeFrame|Frame|nil
   local healerInRangeFrame = nil
@@ -27,7 +29,7 @@ do
         healerInRangeFrame.inRange = inRange
         Interface.inRange = inRange
 
-        NS.ToggleVisibility(inRange, HIR.db.global.reverse)
+        NS.ToggleVisibility(inRange, NS.db.global.reverse)
       end
     end
   end
@@ -42,13 +44,21 @@ do
       Interface.inRange = inRange
     end
 
-    NS.ToggleVisibility(inRange, HIR.db.global.reverse)
+    NS.ToggleVisibility(inRange, NS.db.global.reverse)
 
     if NS.isInGroup() then
+      ---@type HealerInRangeFrame
       healerInRangeFrame:SetScript("OnUpdate", InRangeChecker)
     else
+      ---@type HealerInRangeFrame
       healerInRangeFrame:SetScript("OnUpdate", nil)
-      Interface.textFrame:Hide()
+
+      if NS.db.global.test then
+        Interface.textFrame:Show()
+        Interface.textFrame:SetAlpha(1)
+      else
+        Interface.textFrame:Hide()
+      end
     end
   end
 
@@ -57,26 +67,48 @@ do
   end
 end
 
+function HIR:PLAYER_UNGHOST()
+  self:CheckForHealerInRange()
+end
+
+function HIR:PLAYER_DEAD()
+  self:CheckForHealerInRange()
+end
+
+local DEAD_EVENTS = {
+  "PLAYER_DEAD",
+  "PLAYER_UNGHOST",
+}
+
 function HIR:PLAYER_ENTERING_WORLD()
+  FrameUtil.RegisterFrameForEvents(HIRFrame, DEAD_EVENTS)
+
   if NS.isInGroup() then
+    if NS.isDead() then
+      Interface.textFrame:SetAlpha(0)
+    else
+      if NS.db.global.healer then
+        if NS.isHealer("player") then
+          Interface.textFrame:SetAlpha(0)
+        else
+          Interface.textFrame:SetAlpha(1)
+        end
+      else
+        Interface.textFrame:SetAlpha(1)
+      end
+    end
+
     self:CheckForHealerInRange()
   end
 
-  self:RegisterEvent("GROUP_ROSTER_UPDATE")
+  HIRFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 end
 
-function HIR:SlashCommands(_)
-  LibStub("AceConfigDialog-3.0"):Open(AddonName)
-end
+function HIR:PLAYER_LOGIN()
+  HIRFrame:UnregisterEvent("PLAYER_LOGIN")
 
-function HIR:OnInitialize()
-  self.db = LibStub("AceDB-3.0"):New("HIRDB", NS.DefaultDatabase, true)
-  self:SetupOptions()
-  self:RegisterChatCommand(AddonName, "SlashCommands")
-  self:RegisterChatCommand("hir", "SlashCommands")
-end
-
-function HIR:OnEnable()
   Interface:CreateInterface()
-  self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+  HIRFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
+HIRFrame:RegisterEvent("PLAYER_LOGIN")
