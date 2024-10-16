@@ -87,24 +87,33 @@ function Interface:CreateInterface()
     TextFrame:SetHeight(Text:GetStringHeight())
 
     if NS.isInGroup() then
-      local inRange = NS.isHealerInRange()
-      NS.ToggleVisibility(inRange, NS.db.global.reverse)
+      if NS.isDead() then
+        TextFrame:Hide()
+      else
+        if NS.db.global.healer then
+          if NS.isHealer("player") then
+            TextFrame:Hide()
+          else
+            if NS.noHealersInGroup() then
+              TextFrame:Hide()
+            else
+              TextFrame:Show()
+            end
+          end
+        else
+          if NS.noHealersInGroup() then
+            TextFrame:Hide()
+          else
+            TextFrame:Show()
+          end
+        end
+      end
     else
       if NS.db.global.test then
         TextFrame:Show()
       else
         TextFrame:Hide()
       end
-    end
-
-    if NS.db.global.healer then
-      if NS.isInGroup() and NS.isHealer("player") then
-        TextFrame:SetAlpha(0)
-      else
-        TextFrame:SetAlpha(1)
-      end
-    else
-      TextFrame:SetAlpha(1)
     end
   end
 end
@@ -121,10 +130,18 @@ function Interface:ShowText(value)
           if NS.isHealer("player") then
             Interface.textFrame:SetAlpha(0)
           else
-            Interface.textFrame:SetAlpha(1)
+            if NS.noHealersInGroup() then
+              Interface.textFrame:SetAlpha(0)
+            else
+              Interface.textFrame:SetAlpha(1)
+            end
           end
         else
-          Interface.textFrame:SetAlpha(1)
+          if NS.noHealersInGroup() then
+            Interface.textFrame:SetAlpha(0)
+          else
+            Interface.textFrame:SetAlpha(1)
+          end
         end
       end
     else

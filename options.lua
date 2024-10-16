@@ -43,6 +43,7 @@ NS.AceConfig = {
         if NS.isInGroup() == false then
           if val then
             NS.Interface.textFrame:Show()
+            NS.Interface.textFrame:SetAlpha(1)
           else
             NS.Interface.textFrame:Hide()
           end
@@ -158,7 +159,7 @@ NS.AceConfig = {
       width = "normal",
       order = 100,
       func = function()
-        BattlegroundWinConditionsDB = CopyTable(NS.DefaultDatabase)
+        HIRDB = CopyTable(NS.DefaultDatabase)
         NS.db = CopyTable(NS.DefaultDatabase)
       end,
     },

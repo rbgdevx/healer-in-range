@@ -35,23 +35,34 @@ do
   end
 
   function HIR:CheckForHealerInRange()
-    local inRange = NS.isHealerInRange()
-
-    if not healerInRangeFrame then
-      healerInRangeFrame = CreateFrame("Frame")
-      --- @cast healerInRangeFrame HealerInRangeFrame
-      healerInRangeFrame.inRange = inRange
-      Interface.inRange = inRange
-    end
-
-    NS.ToggleVisibility(inRange, NS.db.global.reverse)
-
     if NS.isInGroup() then
-      ---@type HealerInRangeFrame
-      healerInRangeFrame:SetScript("OnUpdate", InRangeChecker)
+      if NS.noHealersInGroup() then
+        NS.ToggleVisibility(false, false)
+
+        if healerInRangeFrame then
+          ---@type HealerInRangeFrame
+          healerInRangeFrame:SetScript("OnUpdate", nil)
+        end
+      else
+        local inRange = NS.isHealerInRange()
+
+        if not healerInRangeFrame then
+          healerInRangeFrame = CreateFrame("Frame")
+          --- @cast healerInRangeFrame HealerInRangeFrame
+          healerInRangeFrame.inRange = inRange
+          Interface.inRange = inRange
+        end
+
+        NS.ToggleVisibility(inRange, NS.db.global.reverse)
+
+        ---@type HealerInRangeFrame
+        healerInRangeFrame:SetScript("OnUpdate", InRangeChecker)
+      end
     else
-      ---@type HealerInRangeFrame
-      healerInRangeFrame:SetScript("OnUpdate", nil)
+      if healerInRangeFrame then
+        ---@type HealerInRangeFrame
+        healerInRangeFrame:SetScript("OnUpdate", nil)
+      end
 
       if NS.db.global.test then
         Interface.textFrame:Show()
@@ -63,6 +74,7 @@ do
   end
 
   function HIR:GROUP_ROSTER_UPDATE()
+    NS.Debug("GROUP_ROSTER_UPDATE")
     self:CheckForHealerInRange()
   end
 end
@@ -91,15 +103,23 @@ function HIR:PLAYER_ENTERING_WORLD()
         if NS.isHealer("player") then
           Interface.textFrame:SetAlpha(0)
         else
-          Interface.textFrame:SetAlpha(1)
+          if NS.noHealersInGroup() then
+            Interface.textFrame:SetAlpha(0)
+          else
+            Interface.textFrame:SetAlpha(1)
+          end
         end
       else
-        Interface.textFrame:SetAlpha(1)
+        if NS.noHealersInGroup() then
+          Interface.textFrame:SetAlpha(0)
+        else
+          Interface.textFrame:SetAlpha(1)
+        end
       end
     end
-
-    self:CheckForHealerInRange()
   end
+
+  self:CheckForHealerInRange()
 
   HIRFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 end

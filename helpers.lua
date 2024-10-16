@@ -19,6 +19,12 @@ local sformat = string.format
 
 local LSM = LibStub("LibSharedMedia-3.0")
 
+NS.Debug = function(...)
+  if NS.db.global.debug then
+    print(...)
+  end
+end
+
 NS.isDead = function()
   return UnitIsDeadOrGhost("player")
 end
@@ -52,17 +58,29 @@ NS.isHealerInRange = function()
   if NS.isHealer("player") then
     return true
   else
+    local count = 0
     for unit in NS.IterateGroupMembers() do
-      if unit then
-        if NS.isHealer(unit) then
-          if UnitInRange(unit) then
-            return true
-          else
-            return false
-          end
-        end
+      if unit and NS.isHealer(unit) and UnitInRange(unit) then
+        count = count + 1
       end
     end
+    if count > 0 then
+      return true
+    end
+    return false
+  end
+end
+
+NS.noHealersInGroup = function()
+  if NS.isHealer("player") then
+    return false
+  else
+    for unit in NS.IterateGroupMembers() do
+      if unit and NS.isHealer(unit) then
+        return false
+      end
+    end
+    return true
   end
 end
 
