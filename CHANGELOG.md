@@ -1,5 +1,9 @@
 # Healer In Range
 
+## [v1.1.2](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.2) (2024-10-27)
+
+- Update toc
+
 ## [v1.1.1](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.1) (2024-10-16)
 
 - Adding check for if there is no healer in the group
