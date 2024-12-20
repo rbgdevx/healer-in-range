@@ -1,9 +1,9 @@
-## Interface: 110005
+## Interface: 110007
 ## Title: HealerInRange
-## Version: 1.1.2
+## Version: 1.1.3
 ## Author: RBGDEV
 ## Notes: Shows text if you're in or out of range of a healer
-## OptionalDeps: Ace3, LibStub, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets
+## OptionalDeps: AceConfig-3.0, AceGUI-3.0, AceGUI-3.0-SharedMediaWidgets, CallbackHandler-1.0, LibSharedMedia-3.0, LibStub
 ## IconTexture: Interface\AddOns\HealerInRange\logo.tga
 ## SavedVariables: HIRDB
 ## X-Category: Battlegrounds/PvP

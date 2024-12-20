@@ -1,5 +1,14 @@
 # Healer In Range
 
+## [v1.1.3](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.3) (2024-12-20)
+
+- New "Show Outside" setting to hide/show outside of instances
+- Drag and Click control updates to ensure click through when hidden or locked
+- Fixing font dropdown list
+- Updating font size range
+- Minor Cleanup
+- Update toc
+
 ## [v1.1.2](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.2) (2024-10-27)
 
 - Update toc
