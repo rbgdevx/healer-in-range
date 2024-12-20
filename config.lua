@@ -19,6 +19,7 @@ local CreateFrame = CreateFrame
 ---@field test boolean
 ---@field reverse boolean
 ---@field healer boolean
+---@field showOutside boolean
 ---@field fontsize number
 ---@field font string
 ---@field color ColorArray
@@ -58,6 +59,7 @@ NS.DefaultDatabase = {
     test = true,
     reverse = false,
     healer = true,
+    showOutside = false,
     fontsize = 30,
     font = "Friz Quadrata TT",
     color = {

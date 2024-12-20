@@ -3,7 +3,10 @@ local AddonName, NS = ...
 local CopyTable = CopyTable
 local next = next
 local LibStub = LibStub
+local IsInInstance = IsInInstance
 
+local AceConfig = LibStub("AceConfig-3.0")
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 
 ---@type HIR
@@ -90,11 +93,31 @@ NS.AceConfig = {
         return NS.db.global.healer
       end,
     },
+    showOutside = {
+      name = "Show outside of instances",
+      type = "toggle",
+      width = "double",
+      order = 5,
+      set = function(_, val)
+        NS.db.global.showOutside = val
+        if not IsInInstance() then
+          if val then
+            local inRange = NS.isHealerInRange()
+            NS.ToggleVisibility(inRange, val)
+          else
+            NS.Interface.textFrame:SetAlpha(0)
+          end
+        end
+      end,
+      get = function(_)
+        return NS.db.global.showOutside
+      end,
+    },
     fontsize = {
       type = "range",
       name = "Font Size",
       width = "double",
-      order = 5,
+      order = 6,
       min = 2,
       max = 64,
       step = 1,
@@ -112,7 +135,7 @@ NS.AceConfig = {
       type = "select",
       name = "Font",
       width = "double",
-      order = 6,
+      order = 7,
       dialogControl = "LSM30_Font",
       values = SharedMedia:HashTable("font"),
       set = function(_, val)
@@ -129,7 +152,7 @@ NS.AceConfig = {
       type = "color",
       name = "Color",
       width = "double",
-      order = 7,
+      order = 8,
       hasAlpha = true,
       set = function(_, val1, val2, val3, val4)
         NS.db.global.color.r = val1
@@ -140,19 +163,6 @@ NS.AceConfig = {
       end,
       get = function(_)
         return NS.db.global.color.r, NS.db.global.color.g, NS.db.global.color.b, NS.db.global.color.a
-      end,
-    },
-    debug = {
-      name = "Toggle debug mode",
-      desc = "Turning this feature on prints debug messages to the chat window.",
-      type = "toggle",
-      width = "full",
-      order = 99,
-      set = function(_, val)
-        NS.db.global.debug = val
-      end,
-      get = function(_)
-        return NS.db.global.debug
       end,
     },
     reset = {
@@ -176,13 +186,13 @@ function Options:SlashCommands(message)
       NS.db.global.lock = false
     end
   else
-    LibStub("AceConfigDialog-3.0"):Open(AddonName)
+    AceConfigDialog:Open(AddonName)
   end
 end
 
 function Options:Setup()
-  LibStub("AceConfig-3.0"):RegisterOptionsTable(AddonName, NS.AceConfig)
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(AddonName, AddonName)
+  AceConfig:RegisterOptionsTable(AddonName, NS.AceConfig)
+  AceConfigDialog:AddToBlizOptions(AddonName, AddonName)
 
   SLASH_HIR1 = AddonName
   SLASH_HIR2 = "/hir"

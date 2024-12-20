@@ -13,6 +13,8 @@ local type = type
 local next = next
 local setmetatable = setmetatable
 local getmetatable = getmetatable
+local print = print
+local IsInInstance = IsInInstance
 
 local wipe = table.wipe
 local sformat = string.format
@@ -94,17 +96,35 @@ NS.UpdateFont = function(frame)
 end
 
 NS.ToggleVisibility = function(inRange, reverse)
-  if inRange then
-    if reverse then
-      NS.Interface:ShowText(false)
+  if IsInInstance() then
+    if inRange then
+      if reverse then
+        NS.Interface:ShowText(false)
+      else
+        NS.Interface:ShowText(true)
+      end
     else
-      NS.Interface:ShowText(true)
+      if reverse then
+        NS.Interface:ShowText(true)
+      else
+        NS.Interface:ShowText(false)
+      end
     end
   else
-    if reverse then
-      NS.Interface:ShowText(true)
-    else
-      NS.Interface:ShowText(false)
+    if NS.db.global.showOutside then
+      if inRange then
+        if reverse then
+          NS.Interface:ShowText(false)
+        else
+          NS.Interface:ShowText(true)
+        end
+      else
+        if reverse then
+          NS.Interface:ShowText(true)
+        else
+          NS.Interface:ShowText(false)
+        end
+      end
     end
   end
 end

@@ -3,6 +3,7 @@ local _, NS = ...
 local Interface = NS.Interface
 
 local CreateFrame = CreateFrame
+local IsInInstance = IsInInstance
 
 ---@type HIR
 local HIR = NS.HIR
@@ -95,13 +96,21 @@ local DEAD_EVENTS = {
 function HIR:PLAYER_ENTERING_WORLD()
   FrameUtil.RegisterFrameForEvents(HIRFrame, DEAD_EVENTS)
 
-  if NS.isInGroup() then
-    if NS.isDead() then
-      Interface.textFrame:SetAlpha(0)
-    else
-      if NS.db.global.healer then
-        if NS.isHealer("player") then
-          Interface.textFrame:SetAlpha(0)
+  if IsInInstance() then
+    if NS.isInGroup() then
+      if NS.isDead() then
+        Interface.textFrame:SetAlpha(0)
+      else
+        if NS.db.global.healer then
+          if NS.isHealer("player") then
+            Interface.textFrame:SetAlpha(0)
+          else
+            if NS.noHealersInGroup() then
+              Interface.textFrame:SetAlpha(0)
+            else
+              Interface.textFrame:SetAlpha(1)
+            end
+          end
         else
           if NS.noHealersInGroup() then
             Interface.textFrame:SetAlpha(0)
@@ -109,11 +118,31 @@ function HIR:PLAYER_ENTERING_WORLD()
             Interface.textFrame:SetAlpha(1)
           end
         end
-      else
-        if NS.noHealersInGroup() then
+      end
+    end
+  else
+    if NS.db.global.showOutside then
+      if NS.isInGroup() then
+        if NS.isDead() then
           Interface.textFrame:SetAlpha(0)
         else
-          Interface.textFrame:SetAlpha(1)
+          if NS.db.global.healer then
+            if NS.isHealer("player") then
+              Interface.textFrame:SetAlpha(0)
+            else
+              if NS.noHealersInGroup() then
+                Interface.textFrame:SetAlpha(0)
+              else
+                Interface.textFrame:SetAlpha(1)
+              end
+            end
+          else
+            if NS.noHealersInGroup() then
+              Interface.textFrame:SetAlpha(0)
+            else
+              Interface.textFrame:SetAlpha(1)
+            end
+          end
         end
       end
     end
