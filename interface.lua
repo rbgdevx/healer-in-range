@@ -97,6 +97,8 @@ function Interface:CreateInterface()
     TextFrame:SetWidth(Text:GetStringWidth())
     TextFrame:SetHeight(Text:GetStringHeight())
 
+    TextFrame:Hide()
+
     if IsInInstance() then
       if NS.isInGroup() then
         if NS.isDead() then
@@ -131,24 +133,14 @@ function Interface:CreateInterface()
       if NS.db.global.test then
         TextFrame:Show()
       else
-        if NS.db.global.test then
-          TextFrame:Show()
-        else
-          if NS.db.global.showOutside then
-            if NS.isInGroup() then
-              if NS.isDead() then
-                TextFrame:Hide()
-              else
-                if NS.db.global.healer then
-                  if NS.isHealer("player") then
-                    TextFrame:Hide()
-                  else
-                    if NS.noHealersInGroup() then
-                      TextFrame:Hide()
-                    else
-                      TextFrame:Show()
-                    end
-                  end
+        if NS.db.global.showOutside then
+          if NS.isInGroup() then
+            if NS.isDead() then
+              TextFrame:Hide()
+            else
+              if NS.db.global.healer then
+                if NS.isHealer("player") then
+                  TextFrame:Hide()
                 else
                   if NS.noHealersInGroup() then
                     TextFrame:Hide()
@@ -156,13 +148,19 @@ function Interface:CreateInterface()
                     TextFrame:Show()
                   end
                 end
-              end
-            else
-              if NS.db.global.test then
-                TextFrame:Show()
               else
-                TextFrame:Hide()
+                if NS.noHealersInGroup() then
+                  TextFrame:Hide()
+                else
+                  TextFrame:Show()
+                end
               end
+            end
+          else
+            if NS.db.global.test then
+              TextFrame:Show()
+            else
+              TextFrame:Hide()
             end
           end
         end
@@ -172,24 +170,16 @@ function Interface:CreateInterface()
 end
 
 function Interface:ShowText(value)
-  if IsInInstance() then
-    if NS.isInGroup() then
-      if value then
-        Interface.textFrame:Show()
+  if NS.isInGroup() then
+    if value then
+      Interface.textFrame:Show()
 
-        if NS.isDead() then
-          Interface.textFrame:SetAlpha(0)
-        else
-          if NS.db.global.healer then
-            if NS.isHealer("player") then
-              Interface.textFrame:SetAlpha(0)
-            else
-              if NS.noHealersInGroup() then
-                Interface.textFrame:SetAlpha(0)
-              else
-                Interface.textFrame:SetAlpha(1)
-              end
-            end
+      if NS.isDead() then
+        Interface.textFrame:SetAlpha(0)
+      else
+        if NS.db.global.healer then
+          if NS.isHealer("player") then
+            Interface.textFrame:SetAlpha(0)
           else
             if NS.noHealersInGroup() then
               Interface.textFrame:SetAlpha(0)
@@ -197,60 +187,23 @@ function Interface:ShowText(value)
               Interface.textFrame:SetAlpha(1)
             end
           end
+        else
+          if NS.noHealersInGroup() then
+            Interface.textFrame:SetAlpha(0)
+          else
+            Interface.textFrame:SetAlpha(1)
+          end
         end
-      else
-        Interface.textFrame:Hide()
       end
     else
-      if NS.db.global.test then
-        Interface.textFrame:Show()
-        Interface.textFrame:SetAlpha(1)
-      else
-        Interface.textFrame:Hide()
-      end
+      Interface.textFrame:Hide()
     end
   else
     if NS.db.global.test then
       Interface.textFrame:Show()
+      Interface.textFrame:SetAlpha(1)
     else
-      if NS.db.global.showOutside then
-        if NS.isInGroup() then
-          if value then
-            Interface.textFrame:Show()
-
-            if NS.isDead() then
-              Interface.textFrame:SetAlpha(0)
-            else
-              if NS.db.global.healer then
-                if NS.isHealer("player") then
-                  Interface.textFrame:SetAlpha(0)
-                else
-                  if NS.noHealersInGroup() then
-                    Interface.textFrame:SetAlpha(0)
-                  else
-                    Interface.textFrame:SetAlpha(1)
-                  end
-                end
-              else
-                if NS.noHealersInGroup() then
-                  Interface.textFrame:SetAlpha(0)
-                else
-                  Interface.textFrame:SetAlpha(1)
-                end
-              end
-            end
-          else
-            Interface.textFrame:Hide()
-          end
-        else
-          if NS.db.global.test then
-            Interface.textFrame:Show()
-            Interface.textFrame:SetAlpha(1)
-          else
-            Interface.textFrame:Hide()
-          end
-        end
-      end
+      Interface.textFrame:Hide()
     end
   end
 end

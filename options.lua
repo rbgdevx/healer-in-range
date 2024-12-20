@@ -70,7 +70,7 @@ NS.AceConfig = {
         NS.UpdateText(NS.Interface.text, val)
         if NS.isInGroup() then
           local inRange = NS.isHealerInRange()
-          NS.ToggleVisibility(inRange, val)
+          NS.ToggleVisibility(inRange, NS.db.global.reverse)
         end
       end,
       get = function(_)
@@ -86,7 +86,7 @@ NS.AceConfig = {
         NS.db.global.healer = val
         if NS.isInGroup() then
           local inRange = NS.isHealerInRange()
-          NS.ToggleVisibility(inRange, val)
+          NS.ToggleVisibility(inRange, NS.db.global.reverse)
         end
       end,
       get = function(_)
@@ -102,8 +102,10 @@ NS.AceConfig = {
         NS.db.global.showOutside = val
         if not IsInInstance() then
           if val then
+            NS.Interface.textFrame:Show()
+            NS.Interface.textFrame:SetAlpha(1)
             local inRange = NS.isHealerInRange()
-            NS.ToggleVisibility(inRange, val)
+            NS.ToggleVisibility(inRange, NS.db.global.reverse)
           else
             NS.Interface.textFrame:SetAlpha(0)
           end
@@ -151,7 +153,7 @@ NS.AceConfig = {
     color = {
       type = "color",
       name = "Color",
-      width = "double",
+      width = "full",
       order = 8,
       hasAlpha = true,
       set = function(_, val1, val2, val3, val4)

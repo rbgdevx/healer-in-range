@@ -28,7 +28,9 @@
     "SlashCmdList",
     "hash_SlashCmdList",
     "ButtonFrameTemplate_HidePortrait",
-    "FrameUtil"
+    "FrameUtil",
+    "CopyTable",
+    "UIParent"
   ],
   "Lua.runtime.version": "Lua 5.1",
   "Lua.runtime.builtin": {
@@ -42,7 +44,5 @@
     "table": "disable",
     "utf8": "disable"
   },
-  "Lua.workspace.library": [
-    "~\\.vscode\\extensions\\ketho.wow-api-0.17.6\\Annotations"
-  ]
+  "Lua.workspace.library": ["~\\.vscode\\extensions\\ketho.wow-api-0.18.1\\Annotations"]
 }
