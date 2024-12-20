@@ -1,5 +1,9 @@
 # Healer In Range
 
+## [v1.1.4](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.4) (2024-12-20)
+
+- Fixing show outside logic
+
 ## [v1.1.3](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.3) (2024-12-20)
 
 - New "Show Outside" setting to hide/show outside of instances
