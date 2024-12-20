@@ -17,7 +17,7 @@ local getmetatable = getmetatable
 local wipe = table.wipe
 local sformat = string.format
 
-local LSM = LibStub("LibSharedMedia-3.0")
+local SharedMedia = LibStub("LibSharedMedia-3.0")
 
 NS.Debug = function(...)
   if NS.db.global.debug then
@@ -90,7 +90,7 @@ NS.UpdateText = function(frame, reverse)
 end
 
 NS.UpdateFont = function(frame)
-  frame:SetFont(LSM:Fetch("font", NS.db.global.font), NS.db.global.fontsize, "OUTLINE")
+  frame:SetFont(SharedMedia:Fetch("font", NS.db.global.font), NS.db.global.fontsize, "OUTLINE")
 end
 
 NS.ToggleVisibility = function(inRange, reverse)
