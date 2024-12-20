@@ -172,17 +172,11 @@ function Interface:CreateInterface()
 end
 
 function Interface:ShowText(value)
-  if NS.isInGroup() then
-    if value then
-      Interface.textFrame:Show()
   if IsInInstance() then
     if NS.isInGroup() then
       if value then
         Interface.textFrame:Show()
 
-      else
-        if NS.db.global.healer then
-          if NS.isHealer("player") then
         if NS.isDead() then
           Interface.textFrame:SetAlpha(0)
         else
