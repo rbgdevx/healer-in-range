@@ -1,5 +1,10 @@
 # Healer In Range
 
+## [v1.1.5](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.5) (2024-01-15)
+
+- Fixing hiding text after un-checking test mode, and unifying this approach everywhere it needs to be hidden
+- Minor Cleanup
+
 ## [v1.1.4](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.4) (2024-12-20)
 
 - Fixing show outside logic

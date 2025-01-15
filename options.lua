@@ -50,7 +50,7 @@ NS.AceConfig = {
             NS.Interface.textFrame:Show()
             NS.Interface.textFrame:SetAlpha(1)
           else
-            NS.Interface.textFrame:Hide()
+            NS.Interface.textFrame:SetAlpha(0)
           end
         end
       end,
@@ -198,7 +198,7 @@ function Options:Setup()
   AceConfig:RegisterOptionsTable(AddonName, NS.AceConfig)
   AceConfigDialog:AddToBlizOptions(AddonName, AddonName)
 
-  SLASH_HIR1 = AddonName
+  SLASH_HIR1 = "/healerinrange"
   SLASH_HIR2 = "/hir"
 
   function SlashCmdList.HIR(message)

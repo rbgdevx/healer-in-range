@@ -1,6 +1,6 @@
 ## Interface: 110007
 ## Title: HealerInRange
-## Version: 1.1.4
+## Version: 1.1.5
 ## Author: RBGDEV
 ## Notes: Shows text if you're in or out of range of a healer
 ## OptionalDeps: AceConfig-3.0, AceGUI-3.0, AceGUI-3.0-SharedMediaWidgets, CallbackHandler-1.0, LibSharedMedia-3.0, LibStub

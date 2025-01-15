@@ -196,14 +196,14 @@ function Interface:ShowText(value)
         end
       end
     else
-      Interface.textFrame:Hide()
+      Interface.textFrame:SetAlpha(0)
     end
   else
     if NS.db.global.test then
       Interface.textFrame:Show()
       Interface.textFrame:SetAlpha(1)
     else
-      Interface.textFrame:Hide()
+      Interface.textFrame:SetAlpha(0)
     end
   end
 end

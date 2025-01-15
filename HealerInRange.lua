@@ -70,7 +70,7 @@ do
           Interface.textFrame:Show()
           Interface.textFrame:SetAlpha(1)
         else
-          Interface.textFrame:Hide()
+          Interface.textFrame:SetAlpha(0)
         end
       end
     else
@@ -108,7 +108,7 @@ do
             Interface.textFrame:Show()
             Interface.textFrame:SetAlpha(1)
           else
-            Interface.textFrame:Hide()
+            Interface.textFrame:SetAlpha(0)
           end
         end
       end
