@@ -185,6 +185,8 @@ function HIR:PLAYER_ENTERING_WORLD()
           end
         end
       end
+    else
+      Interface.textFrame:SetAlpha(0)
     end
   end
 
