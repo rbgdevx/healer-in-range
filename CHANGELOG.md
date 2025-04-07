@@ -1,5 +1,9 @@
 # Healer In Range
 
+## [v1.1.7](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.7) (2025-04-06)
+
+- Adding new setting to be able to control the distance check to healers
+
 ## [v1.1.6](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.6) (2025-03-30)
 
 - Hiding text when leaving instances if show outside setting is off

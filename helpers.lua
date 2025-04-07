@@ -8,18 +8,26 @@ local GetNumGroupMembers = GetNumGroupMembers
 local GetNumSubgroupMembers = GetNumSubgroupMembers
 local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost
+local IsInInstance = IsInInstance
 local pairs = pairs
 local type = type
 local next = next
 local setmetatable = setmetatable
 local getmetatable = getmetatable
 local print = print
-local IsInInstance = IsInInstance
+local tonumber = tonumber
 
--- local wipe = table.wipe
 local sformat = string.format
+local tinsert = table.insert
+local tsort = table.sort
+-- local wipe = table.wipe
 
 local SharedMedia = LibStub("LibSharedMedia-3.0")
+local LibRangeCheck = LibStub("LibRangeCheck-3.0")
+
+NS.trim = function(str)
+  return str:gsub("^%s*(.-)%s*$", "%1")
+end
 
 NS.Debug = function(...)
   if NS.db.global.debug then
@@ -56,14 +64,70 @@ NS.IterateGroupMembers = function(reversed, forceParty)
   end
 end
 
+function NS.GetRange(unit, checkVisible)
+  return LibRangeCheck:GetRange(unit, checkVisible)
+end
+
+function NS.CheckRange(unit, range, operator)
+  local min, max = LibRangeCheck:GetRange(unit, true)
+  if type(range) ~= "number" then
+    range = tonumber(range)
+  end
+  if not range then
+    return
+  end
+  if operator == "<=" then
+    return (max or 999) <= range
+  else
+    return (min or 0) >= range
+  end
+end
+
+local RangeCacheStrings = { friend = "", harm = "", misc = "" }
+local function RangeCacheUpdate()
+  local friend, harm, misc = {}, {}, {}
+  local friendString, harmString, miscString
+
+  for range in LibRangeCheck:GetFriendCheckers() do
+    tinsert(friend, range)
+  end
+  tsort(friend)
+  for range in LibRangeCheck:GetHarmCheckers() do
+    tinsert(harm, range)
+  end
+  tsort(harm)
+  for range in LibRangeCheck:GetMiscCheckers() do
+    tinsert(misc, range)
+  end
+  tsort(misc)
+
+  for _, key in pairs(friend) do
+    friendString = (friendString and (friendString .. ", ") or "") .. key
+  end
+  for _, key in pairs(harm) do
+    harmString = (harmString and (harmString .. ", ") or "") .. key
+  end
+  for _, key in pairs(misc) do
+    miscString = (miscString and (miscString .. ", ") or "") .. key
+  end
+  RangeCacheStrings.friend, RangeCacheStrings.harm, RangeCacheStrings.misc = friendString, harmString, miscString
+end
+
+LibRangeCheck:RegisterCallback(LibRangeCheck.CHECKERS_CHANGED, RangeCacheUpdate)
+
 NS.isHealerInRange = function()
   if NS.isHealer("player") then
     return true
   else
     local count = 0
     for unit in NS.IterateGroupMembers() do
-      if unit and NS.isHealer(unit) and UnitInRange(unit) then
-        count = count + 1
+      if unit and NS.isHealer(unit) then
+        local inRangeCustom = NS.CheckRange(unit, NS.db.global.range, NS.db.global.rangeOperator)
+        local inRangeDefault = UnitInRange(unit)
+
+        if NS.db.global.enableRange and inRangeCustom or inRangeDefault then
+          count = count + 1
+        end
       end
     end
     if count > 0 then

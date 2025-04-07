@@ -22,6 +22,9 @@ local CreateFrame = CreateFrame
 ---@field showOutside boolean
 ---@field fontsize number
 ---@field font string
+---@field enableRange boolean
+---@field rangeOperator string
+---@field range string
 ---@field color ColorArray
 ---@field position PositionArray
 ---@field debug boolean
@@ -62,6 +65,9 @@ NS.DefaultDatabase = {
     showOutside = false,
     fontsize = 30,
     font = "Friz Quadrata TT",
+    enableRange = false,
+    range = "",
+    rangeOperator = "<=",
     color = {
       r = 1,
       g = 1,

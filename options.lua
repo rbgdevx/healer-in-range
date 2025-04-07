@@ -115,11 +115,130 @@ NS.AceConfig = {
         return NS.db.global.showOutside
       end,
     },
+    spacer1 = {
+      name = "",
+      type = "description",
+      order = 6,
+      width = "full",
+    },
+    enableRange = {
+      name = "Watch a specific distance:",
+      type = "toggle",
+      width = 1.15,
+      order = 7,
+      set = function(_, val)
+        NS.db.global.enableRange = val
+
+        if val then
+          if NS.trim(NS.db.global.range) == "" then
+            NS.AceConfig.args.spacer2.name = "Distance tracker won't run without a number provided."
+          else
+            NS.AceConfig.args.spacer2.name = ""
+          end
+
+          if not tonumber(NS.db.global.range) and NS.trim(NS.db.global.range) ~= "" then
+            NS.AceConfig.args.rangeError.name = "Must be a number."
+          end
+        else
+          NS.AceConfig.args.rangeError.name = ""
+          NS.AceConfig.args.spacer2.name = ""
+        end
+      end,
+      get = function(_)
+        return NS.db.global.enableRange
+      end,
+    },
+    rangeOperator = {
+      name = "",
+      desc = "",
+      type = "select",
+      width = 0.4,
+      order = 8,
+      values = {
+        ["<="] = "<=",
+        [">="] = ">=",
+      },
+      disabled = function()
+        return not NS.db.global.enableRange
+      end,
+      set = function(_, val)
+        NS.db.global.rangeOperator = val
+      end,
+      get = function(_)
+        return NS.db.global.rangeOperator
+      end,
+    },
+    gap1 = {
+      name = "",
+      desc = "",
+      type = "description",
+      order = 9,
+      width = 0.025,
+    },
+    range = {
+      name = "",
+      desc = "",
+      type = "input",
+      width = 0.75,
+      order = 10,
+      disabled = function()
+        return not NS.db.global.enableRange
+      end,
+      set = function(_, val)
+        NS.db.global.range = val
+
+        if NS.trim(val) == "" then
+          NS.AceConfig.args.spacer2.name = "Distance tracker won't run without a number provided."
+        else
+          NS.AceConfig.args.spacer2.name = ""
+        end
+
+        -- ensure val can be converted to a number
+        local num = tonumber(val)
+        if not num and NS.trim(val) ~= "" then
+          NS.AceConfig.args.rangeError.name = "Must be a number."
+        else
+          NS.AceConfig.args.rangeError.name = ""
+        end
+      end,
+      get = function(_)
+        if NS.db.global.enableRange and NS.trim(NS.db.global.range) == "" then
+          NS.AceConfig.args.spacer2.name = "Distance tracker won't run without a number provided."
+        end
+        return NS.db.global.range
+      end,
+    },
+    gap2 = {
+      name = "",
+      desc = "",
+      type = "description",
+      order = 11,
+      width = 0.01,
+    },
+    rangeError = {
+      name = "",
+      type = "description",
+      order = 12,
+      width = 1.0,
+      disabled = function()
+        return not NS.db.global.enableRange
+      end,
+    },
+    spacer2 = {
+      name = "",
+      type = "description",
+      fontSize = "small",
+      order = 13,
+      width = "full",
+      disabled = function()
+        return not NS.db.global.enableRange
+      end,
+    },
     fontsize = {
       type = "range",
       name = "Font Size",
       width = "double",
-      order = 6,
+      order = 14,
       min = 2,
       max = 64,
       step = 1,
@@ -137,7 +256,7 @@ NS.AceConfig = {
       type = "select",
       name = "Font",
       width = "double",
-      order = 7,
+      order = 15,
       dialogControl = "LSM30_Font",
       values = SharedMedia:HashTable("font"),
       set = function(_, val)
@@ -154,7 +273,7 @@ NS.AceConfig = {
       type = "color",
       name = "Color",
       width = "full",
-      order = 8,
+      order = 16,
       hasAlpha = true,
       set = function(_, val1, val2, val3, val4)
         NS.db.global.color.r = val1
