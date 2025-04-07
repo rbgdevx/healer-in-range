@@ -122,11 +122,18 @@ NS.isHealerInRange = function()
     local count = 0
     for unit in NS.IterateGroupMembers() do
       if unit and NS.isHealer(unit) then
-        local inRangeCustom = NS.CheckRange(unit, NS.db.global.range, NS.db.global.rangeOperator)
+        local rangeEnabled = NS.db.global.enableRange and tonumber(NS.db.global.range)
+        local inRangeCustom = NS.CheckRange(unit, tonumber(NS.db.global.range), NS.db.global.rangeOperator)
         local inRangeDefault = UnitInRange(unit)
 
-        if NS.db.global.enableRange and inRangeCustom or inRangeDefault then
-          count = count + 1
+        if rangeEnabled then
+          if inRangeCustom then
+            count = count + 1
+          end
+        else
+          if inRangeDefault then
+            count = count + 1
+          end
         end
       end
     end
