@@ -138,7 +138,7 @@ function HIR:PLAYER_ENTERING_WORLD()
 
   if IsInInstance() then
     if NS.isInGroup() then
-      if NS.isDead() then
+      if NS.isDead("player") then
         Interface.textFrame:SetAlpha(0)
       else
         if NS.db.global.healer then
@@ -163,7 +163,7 @@ function HIR:PLAYER_ENTERING_WORLD()
   else
     if NS.db.global.showOutside then
       if NS.isInGroup() then
-        if NS.isDead() then
+        if NS.isDead("player") then
           Interface.textFrame:SetAlpha(0)
         else
           if NS.db.global.healer then

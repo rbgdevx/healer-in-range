@@ -1,5 +1,12 @@
 # Healer In Range
 
+## [v1.1.9](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.9) (2025-05-13)
+
+- Fixing the custom range checker code
+- Ensuring healer is alive and not offline
+- Assigning addon to my own category for organization
+- Update toc
+
 ## [v1.1.8](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.8) (2025-04-07)
 
 - Ensuring the range is a valid number before using it to check distance

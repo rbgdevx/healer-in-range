@@ -101,7 +101,7 @@ function Interface:CreateInterface()
 
     if IsInInstance() then
       if NS.isInGroup() then
-        if NS.isDead() then
+        if NS.isDead("player") then
           TextFrame:Hide()
         else
           if NS.db.global.healer then
@@ -135,7 +135,7 @@ function Interface:CreateInterface()
       else
         if NS.db.global.showOutside then
           if NS.isInGroup() then
-            if NS.isDead() then
+            if NS.isDead("player") then
               TextFrame:Hide()
             else
               if NS.db.global.healer then
@@ -174,7 +174,7 @@ function Interface:ShowText(value)
     if value then
       Interface.textFrame:Show()
 
-      if NS.isDead() then
+      if NS.isDead("player") then
         Interface.textFrame:SetAlpha(0)
       else
         if NS.db.global.healer then

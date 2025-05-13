@@ -18,12 +18,12 @@ local print = print
 local tonumber = tonumber
 
 local sformat = string.format
-local tinsert = table.insert
-local tsort = table.sort
+-- local tinsert = table.insert
+-- local tsort = table.sort
 -- local wipe = table.wipe
 
 local SharedMedia = LibStub("LibSharedMedia-3.0")
-local LibRangeCheck = LibStub("LibRangeCheck-3.0")
+-- local LibRangeCheck = LibStub("LibRangeCheck-3.0")
 
 NS.trim = function(str)
   return str:gsub("^%s*(.-)%s*$", "%1")
@@ -35,8 +35,12 @@ NS.Debug = function(...)
   end
 end
 
-NS.isDead = function()
-  return UnitIsDeadOrGhost("player")
+NS.isConnected = function(unit)
+  return UnitIsConnected(unit)
+end
+
+NS.isDead = function(unit)
+  return UnitIsDeadOrGhost(unit)
 end
 
 NS.isInGroup = function()
@@ -64,73 +68,83 @@ NS.IterateGroupMembers = function(reversed, forceParty)
   end
 end
 
-function NS.GetRange(unit, checkVisible)
-  return LibRangeCheck:GetRange(unit, checkVisible)
-end
+-- function NS.GetRange(unit, checkVisible)
+-- 	return LibRangeCheck:GetRange(unit, checkVisible)
+-- end
 
-function NS.CheckRange(unit, range, operator)
-  local min, max = LibRangeCheck:GetRange(unit, true)
-  if type(range) ~= "number" then
-    range = tonumber(range)
-  end
-  if not range then
-    return
-  end
-  if operator == "<=" then
-    return (max or 999) <= range
-  else
-    return (min or 0) >= range
-  end
-end
+-- function NS.CheckRange(unit, range, operator)
+--   local min, max = LibRangeCheck:GetRange(unit, true)
+--   if type(range) ~= "number" then
+--     range = tonumber(range)
+--   end
+--   if not range then
+--     return
+--   end
+--   if operator == "<=" then
+--     return (max or 999) <= range
+--   else
+--     return (min or 0) >= range
+--   end
+-- end
 
-local RangeCacheStrings = { friend = "", harm = "", misc = "" }
-local function RangeCacheUpdate()
-  local friend, harm, misc = {}, {}, {}
-  local friendString, harmString, miscString
+-- local RangeCacheStrings = { friend = "", harm = "", misc = "" }
+-- local function RangeCacheUpdate()
+--   local friend, harm, misc = {}, {}, {}
+--   local friendString, harmString, miscString
 
-  for range in LibRangeCheck:GetFriendCheckers() do
-    tinsert(friend, range)
-  end
-  tsort(friend)
-  for range in LibRangeCheck:GetHarmCheckers() do
-    tinsert(harm, range)
-  end
-  tsort(harm)
-  for range in LibRangeCheck:GetMiscCheckers() do
-    tinsert(misc, range)
-  end
-  tsort(misc)
+--   for range in LibRangeCheck:GetFriendCheckers() do
+--     tinsert(friend, range)
+--   end
+--   tsort(friend)
+--   for range in LibRangeCheck:GetHarmCheckers() do
+--     tinsert(harm, range)
+--   end
+--   tsort(harm)
+--   for range in LibRangeCheck:GetMiscCheckers() do
+--     tinsert(misc, range)
+--   end
+--   tsort(misc)
 
-  for _, key in pairs(friend) do
-    friendString = (friendString and (friendString .. ", ") or "") .. key
-  end
-  for _, key in pairs(harm) do
-    harmString = (harmString and (harmString .. ", ") or "") .. key
-  end
-  for _, key in pairs(misc) do
-    miscString = (miscString and (miscString .. ", ") or "") .. key
-  end
-  RangeCacheStrings.friend, RangeCacheStrings.harm, RangeCacheStrings.misc = friendString, harmString, miscString
-end
+--   for _, key in pairs(friend) do
+--     friendString = (friendString and (friendString .. ", ") or "") .. key
+--   end
+--   for _, key in pairs(harm) do
+--     harmString = (harmString and (harmString .. ", ") or "") .. key
+--   end
+--   for _, key in pairs(misc) do
+--     miscString = (miscString and (miscString .. ", ") or "") .. key
+--   end
+--   RangeCacheStrings.friend, RangeCacheStrings.harm, RangeCacheStrings.misc = friendString, harmString, miscString
+-- end
 
-LibRangeCheck:RegisterCallback(LibRangeCheck.CHECKERS_CHANGED, RangeCacheUpdate)
+-- LibRangeCheck:RegisterCallback(LibRangeCheck.CHECKERS_CHANGED, RangeCacheUpdate)
 
 NS.isHealerInRange = function()
   if NS.isHealer("player") then
     return true
   else
+    local rangeEnabled = NS.db.global.enableRange and tonumber(NS.db.global.range) ~= nil
     local count = 0
     for unit in NS.IterateGroupMembers() do
-      if unit and NS.isHealer(unit) then
-        local rangeEnabled = NS.db.global.enableRange and tonumber(NS.db.global.range)
-        local inRangeCustom = NS.CheckRange(unit, tonumber(NS.db.global.range), NS.db.global.rangeOperator)
-        local inRangeDefault = UnitInRange(unit)
-
+      if unit and NS.isHealer(unit) and NS.isConnected(unit) and not NS.isDead(unit) then
         if rangeEnabled then
+          local rangeSquared = NS.db.global.range * NS.db.global.range
+          local distanceSquared = UnitDistanceSquared(unit)
+
+          -- NS.CheckRange(unit, tonumber(NS.db.global.range), NS.db.global.rangeOperator)
+          local inRangeCustom = false
+          if NS.db.global.rangeOperator == "<=" then
+            inRangeCustom = distanceSquared <= rangeSquared
+          else
+            inRangeCustom = distanceSquared >= rangeSquared
+          end
+
           if inRangeCustom then
             count = count + 1
           end
         else
+          local inRangeDefault = UnitInRange(unit)
+
           if inRangeDefault then
             count = count + 1
           end
