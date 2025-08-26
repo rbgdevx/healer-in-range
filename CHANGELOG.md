@@ -1,5 +1,9 @@
 # Healer In Range
 
+## [v1.1.10](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.10) (2025-08-26)
+
+- Update toc
+
 ## [v1.1.9](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.9) (2025-05-13)
 
 - Fixing the custom range checker code

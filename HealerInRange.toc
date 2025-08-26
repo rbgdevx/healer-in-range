@@ -1,22 +1,11 @@
-## Interface: 110105
-## Title: HealerInRange
-## Version: 1.1.9
+## Interface: 110200
+## Title: Healer In Range
+## Version: 1.1.10
 ## Author: RBGDEV
 ## Notes: Shows text if you're in or out of range of a healer
-## OptionalDeps: AceConfig-3.0, AceGUI-3.0, AceGUI-3.0-SharedMediaWidgets, CallbackHandler-1.0, LibSharedMedia-3.0, LibStub
-## IconTexture: Interface\AddOns\HealerInRange\logo.tga
+## IconTexture: Interface/AddOns/HealerInRange/logo.tga
 ## SavedVariables: HIRDB
-## Category-enUS: RBGDEV
-## Category-deDE: RBGDEV
-## Category-esES: RBGDEV
-## Category-esMX: RBGDEV
-## Category-frFR: RBGDEV
-## Category-itIT: RBGDEV
-## Category-koKR: RBGDEV
-## Category-ptBR: RBGDEV
-## Category-ruRU: RBGDEV
-## Category-zhCN: RBGDEV
-## Category-zhTW: RBGDEV
+## Category: RBGDEV
 ## X-Category: Battlegrounds/PvP
 ## X-License: All Rights Reserved
 ## X-Website: https://www.curseforge.com/wow/addons/healer-in-range
