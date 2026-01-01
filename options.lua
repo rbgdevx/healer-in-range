@@ -69,8 +69,7 @@ NS.AceConfig = {
         NS.db.global.reverse = val
         NS.UpdateText(NS.Interface.text, val)
         if NS.isInGroup() then
-          local inRange = NS.isHealerInRange()
-          NS.ToggleVisibility(inRange, NS.db.global.reverse)
+          NS.ToggleVisibility(NS.isHealerInRange(), NS.db.global.reverse)
         end
       end,
       get = function(_)
@@ -85,8 +84,7 @@ NS.AceConfig = {
       set = function(_, val)
         NS.db.global.healer = val
         if NS.isInGroup() then
-          local inRange = NS.isHealerInRange()
-          NS.ToggleVisibility(inRange, NS.db.global.reverse)
+          NS.ToggleVisibility(NS.isHealerInRange(), NS.db.global.reverse)
         end
       end,
       get = function(_)
@@ -115,17 +113,16 @@ NS.AceConfig = {
         return NS.db.global.showOutside
       end,
     },
-    spacer1 = {
-      name = "",
-      type = "description",
-      order = 6,
-      width = "full",
-    },
+    spacer1 = { name = "", type = "description", order = 6, width = "full" },
     enableRange = {
       name = "Watch a specific distance:",
+      desc = "This only works outdoors and not in instanced content (raids/dungeons/delves/battlegrounds/arena)",
       type = "toggle",
       width = 1.15,
       order = 7,
+      disabled = function()
+        return IsInInstance()
+      end,
       set = function(_, val)
         NS.db.global.enableRange = val
 
@@ -159,7 +156,7 @@ NS.AceConfig = {
         [">="] = ">=",
       },
       disabled = function()
-        return not NS.db.global.enableRange
+        return not NS.db.global.enableRange or IsInInstance()
       end,
       set = function(_, val)
         NS.db.global.rangeOperator = val
@@ -182,7 +179,7 @@ NS.AceConfig = {
       width = 0.75,
       order = 10,
       disabled = function()
-        return not NS.db.global.enableRange
+        return not NS.db.global.enableRange or IsInInstance()
       end,
       set = function(_, val)
         NS.db.global.range = val
@@ -224,17 +221,8 @@ NS.AceConfig = {
         return not NS.db.global.enableRange
       end,
     },
-    spacer2 = {
-      name = "",
-      type = "description",
-      fontSize = "small",
-      order = 13,
-      width = "full",
-      disabled = function()
-        return not NS.db.global.enableRange
-      end,
-    },
-    fontsize = {
+    spacer2 = { name = " ", type = "description", order = 13, width = "full" },
+    fontSize = {
       type = "range",
       name = "Font Size",
       width = "double",
@@ -243,22 +231,23 @@ NS.AceConfig = {
       max = 64,
       step = 1,
       set = function(_, val)
-        NS.db.global.fontsize = val
+        NS.db.global.fontSize = val
         NS.UpdateFont(NS.Interface.text)
         NS.Interface.textFrame:SetWidth(NS.Interface.text:GetStringWidth())
         NS.Interface.textFrame:SetHeight(NS.Interface.text:GetStringHeight())
       end,
       get = function(_)
-        return NS.db.global.fontsize
+        return NS.db.global.fontSize
       end,
     },
+    spacer3 = { name = " ", type = "description", order = 15, width = "full" },
     font = {
       type = "select",
       name = "Font",
-      width = "double",
-      order = 15,
+      width = 1.5,
       dialogControl = "LSM30_Font",
       values = SharedMedia:HashTable("font"),
+      order = 16,
       set = function(_, val)
         NS.db.global.font = val
         NS.UpdateFont(NS.Interface.text)
@@ -269,11 +258,12 @@ NS.AceConfig = {
         return NS.db.global.font
       end,
     },
+    spacer4 = { name = "", type = "description", order = 17, width = 0.1 },
     color = {
       type = "color",
       name = "Color",
-      width = "full",
-      order = 16,
+      width = 0.5,
+      order = 18,
       hasAlpha = true,
       set = function(_, val1, val2, val3, val4)
         NS.db.global.color.r = val1
@@ -286,6 +276,7 @@ NS.AceConfig = {
         return NS.db.global.color.r, NS.db.global.color.g, NS.db.global.color.b, NS.db.global.color.a
       end,
     },
+    spacer5 = { type = "description", order = 19, name = " ", width = "full" },
     reset = {
       name = "Reset Everything",
       type = "execute",

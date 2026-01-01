@@ -14,8 +14,9 @@ local type = type
 local next = next
 local setmetatable = setmetatable
 local getmetatable = getmetatable
-local print = print
+-- local print = print
 local tonumber = tonumber
+local sqrt = math.sqrt
 
 local sformat = string.format
 -- local tinsert = table.insert
@@ -29,10 +30,23 @@ NS.trim = function(str)
   return str:gsub("^%s*(.-)%s*$", "%1")
 end
 
-NS.Debug = function(...)
-  if NS.db.global.debug then
-    print(...)
+NS.YardsToSquared = function(yards)
+  -- UnitDistanceSquared() returns distance^2 in yards^2.
+  -- Users enter yards, so we square it once for comparisons.
+  if type(yards) ~= "number" then
+    yards = tonumber(yards)
   end
+  if not yards then
+    return nil
+  end
+  return yards * yards
+end
+
+NS.SquaredToYards = function(distanceSquared)
+  if type(distanceSquared) ~= "number" then
+    return nil
+  end
+  return sqrt(distanceSquared)
 end
 
 NS.isConnected = function(unit)
@@ -121,40 +135,82 @@ end
 
 NS.isHealerInRange = function()
   if NS.isHealer("player") then
-    return true
+    -- If the player is a healer:
+    -- - If "Disable when spec'd into a healer role" is enabled, we should not show (return false).
+    -- - If "Show Healer out of range instead" is enabled, it doesn't make sense for the player (they're always in range of themself),
+    --   so treat it as not in range (return false) to avoid showing the OUT OF RANGE message.
+    -- - Only when BOTH are disabled do we return true.
+    return NS.db.global.healer == false or NS.db.global.reverse == false
   else
     local rangeEnabled = NS.db.global.enableRange and tonumber(NS.db.global.range) ~= nil
-    local count = 0
-    for unit in NS.IterateGroupMembers() do
-      if unit and NS.isHealer(unit) and NS.isConnected(unit) and not NS.isDead(unit) then
-        if rangeEnabled then
-          local rangeSquared = NS.db.global.range * NS.db.global.range
-          local distanceSquared = UnitDistanceSquared(unit)
-
-          -- NS.CheckRange(unit, tonumber(NS.db.global.range), NS.db.global.rangeOperator)
-          local inRangeCustom = false
-          if NS.db.global.rangeOperator == "<=" then
-            inRangeCustom = distanceSquared <= rangeSquared
-          else
-            inRangeCustom = distanceSquared >= rangeSquared
-          end
-
-          if inRangeCustom then
-            count = count + 1
-          end
-        else
-          local inRangeDefault = UnitInRange(unit)
-
-          if inRangeDefault then
-            count = count + 1
+    -- If custom range is enabled, use the existing count logic.
+    if rangeEnabled then
+      -- UnitDistanceSquared() is restricted in instanced content and can return invalid results.
+      -- If we're in an instance, fall back to default UnitInRange() behavior.
+      if IsInInstance() then
+        for unit in NS.IterateGroupMembers() do
+          if unit and NS.isHealer(unit) and NS.isConnected(unit) and not NS.isDead(unit) then
+            return UnitInRange(unit) -- secret value (safe for SetAlphaFromBoolean)
           end
         end
+        -- If no valid healers are found, return false (effectively "out of range").
+        return false
       end
+
+      local count = 0
+      local rangeSquared = NS.YardsToSquared(tonumber(NS.db.global.range))
+      if not rangeSquared then
+        return false
+      end
+      for unit in NS.IterateGroupMembers() do
+        -- Only consider valid healers, and never count the player themself.
+        if unit and unit ~= "player" and NS.isHealer(unit) and NS.isConnected(unit) and not NS.isDead(unit) then
+          local distanceSquared, checkedDistance = UnitDistanceSquared(unit)
+          if checkedDistance then
+            local inRangeCustom = false
+            if NS.db.global.rangeOperator == "<=" then
+              inRangeCustom = distanceSquared <= rangeSquared
+            else
+              inRangeCustom = distanceSquared >= rangeSquared
+            end
+            if inRangeCustom then
+              count = count + 1
+            end
+          end
+
+          -- Optional debug: show both squared values and yard values for intuition.
+          -- print(
+          -- 	"HIR custom-range:",
+          -- 	unit,
+          -- 	"dist^2=",
+          -- 	distanceSquared,
+          -- 	"(~",
+          -- 	NS.SquaredToYards(distanceSquared),
+          -- 	"yd)",
+          -- 	"threshold^2=",
+          -- 	rangeSquared,
+          -- 	"(=",
+          -- 	tonumber(NS.db.global.range),
+          -- 	"yd)",
+          -- 	"inRange=",
+          -- 	inRangeCustom,
+          -- 	"count=",
+          -- 	count
+          -- )
+        end
+      end
+      return count > 0 -- Returns true if any healer is in custom range.
+    else -- Default range checking, where we cannot do logical comparisons on the secret value directly
+      -- We need to find *one* valid healer and return its UnitInRange secret value.
+      -- SetAlphaFromBoolean will then handle the secret value.
+      for unit in NS.IterateGroupMembers() do
+        if unit and NS.isHealer(unit) and NS.isConnected(unit) and not NS.isDead(unit) then
+          return UnitInRange(unit) -- Return the raw secret value
+        end
+      end
+      -- If no valid healers are found, return false (effectively "out of range").
+      return false
     end
-    if count > 0 then
-      return true
-    end
-    return false
   end
 end
 
@@ -177,40 +233,51 @@ NS.UpdateText = function(frame, reverse)
 end
 
 NS.UpdateFont = function(frame)
-  frame:SetFont(SharedMedia:Fetch("font", NS.db.global.font), NS.db.global.fontsize, "OUTLINE")
+  frame:SetFont(SharedMedia:Fetch("font", NS.db.global.font), NS.db.global.fontSize, "OUTLINE")
 end
 
 NS.ToggleVisibility = function(inRange, reverse)
-  if IsInInstance() then
-    if inRange then
-      if reverse then
-        NS.Interface:ShowText(false)
-      else
-        NS.Interface:ShowText(true)
-      end
-    else
-      if reverse then
-        NS.Interface:ShowText(true)
-      else
-        NS.Interface:ShowText(false)
-      end
-    end
+  local frame = NS.Interface.textFrame
+  if not frame then
+    return
+  end
+
+  -- *** Test mode always forces visibility ***
+  if NS.db.global.test then
+    frame:SetAlpha(1)
+    frame:Show()
+    return
+  end
+
+  local forceInvisible = false
+  -- Check for override conditions that force the frame to be invisible
+  if NS.db.global.healer and NS.isHealer("player") then
+    forceInvisible = true
+  elseif NS.isDead("player") then
+    forceInvisible = true
+  elseif NS.noHealersInGroup() then -- NS.db.global.test is already handled above
+    forceInvisible = true
+  end
+
+  if forceInvisible then
+    frame:SetAlpha(0)
   else
-    if NS.db.global.showOutside then
-      if inRange then
-        if reverse then
-          NS.Interface:ShowText(false)
-        else
-          NS.Interface:ShowText(true)
-        end
-      else
-        if reverse then
-          NS.Interface:ShowText(true)
-        else
-          NS.Interface:ShowText(false)
-        end
-      end
+    local alphaWhenTrue = 1 -- Alpha when healer is in range
+    local alphaWhenFalse = 0 -- Alpha when healer is out of range
+
+    if reverse then
+      alphaWhenTrue = 0
+      alphaWhenFalse = 1
     end
+
+    -- Override based on showOutside setting if *outside* an instance
+    if not IsInInstance() and not NS.db.global.showOutside then
+      alphaWhenTrue = 0
+      alphaWhenFalse = 0
+    end
+
+    frame:SetAlphaFromBoolean(inRange, alphaWhenTrue, alphaWhenFalse)
+    frame:Show()
   end
 end
 

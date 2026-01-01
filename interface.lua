@@ -3,11 +3,22 @@ local AddonName, NS = ...
 local CreateFrame = CreateFrame
 local LibStub = LibStub
 local IsInInstance = IsInInstance
+local issecretvalue = issecretvalue or function(_)
+  return false
+end
 
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 local Interface = {}
 NS.Interface = Interface
+
+local function CanInteractWithFrame(frame)
+  if not frame or not frame.IsVisible or not frame:IsVisible() then
+    return false
+  end
+  local alpha = frame:GetAlpha()
+  return (not issecretvalue(alpha)) and alpha ~= 0
+end
 
 function Interface:MakeUnmovable(frame)
   frame:SetMovable(false)
@@ -20,12 +31,12 @@ function Interface:MakeMoveable(frame)
   frame:SetMovable(true)
   frame:RegisterForDrag("LeftButton")
   frame:SetScript("OnDragStart", function(f)
-    if NS.db.global.lock == false and frame:IsVisible() and frame:GetAlpha() ~= 0 then
+    if NS.db.global.lock == false and CanInteractWithFrame(frame) then
       f:StartMoving()
     end
   end)
   frame:SetScript("OnDragStop", function(f)
-    if NS.db.global.lock == false and frame:IsVisible() and frame:GetAlpha() ~= 0 then
+    if NS.db.global.lock == false and CanInteractWithFrame(frame) then
       f:StopMovingOrSizing()
       local a, _, b, c, d = f:GetPoint()
       NS.db.global.position[1] = a
@@ -44,7 +55,7 @@ end
 function Interface:AddControls(frame)
   frame:EnableMouse(true)
   frame:SetScript("OnMouseUp", function(_, btn)
-    if NS.db.global.lock == false and not IsInInstance() and frame:IsVisible() and frame:GetAlpha() ~= 0 then
+    if NS.db.global.lock == false and not IsInInstance() and self:CanInteractWithFrame(frame) then
       if btn == "RightButton" then
         AceConfigDialog:Open(AddonName)
       end
@@ -97,113 +108,60 @@ function Interface:CreateInterface()
     TextFrame:SetWidth(Text:GetStringWidth())
     TextFrame:SetHeight(Text:GetStringHeight())
 
-    TextFrame:Hide()
+    -- All visibility logic is now handled by Interface:ShowText()
+    self:ShowText()
+  end
+end
 
-    if IsInInstance() then
-      if NS.isInGroup() then
-        if NS.isDead("player") then
-          TextFrame:Hide()
-        else
-          if NS.db.global.healer then
-            if NS.isHealer("player") then
-              TextFrame:Hide()
-            else
-              if NS.noHealersInGroup() then
-                TextFrame:Hide()
-              else
-                TextFrame:Show()
-              end
-            end
-          else
-            if NS.noHealersInGroup() then
-              TextFrame:Hide()
-            else
-              TextFrame:Show()
-            end
-          end
+function Interface:ShowText()
+  local frame = Interface.textFrame
+  if not frame then
+    return
+  end
+
+  -- *** Test mode always forces visibility ***
+  -- If test mode is active, show the frame and set alpha to 1, then return immediately.
+  if NS.db.global.test then
+    frame:Show()
+    frame:SetAlpha(1)
+    return
+  end
+
+  local shouldShowFrame = false
+
+  -- Only evaluate other conditions if test mode is NOT active.
+  if IsInInstance() then
+    if NS.isInGroup() and not NS.isDead("player") then
+      if NS.db.global.healer then
+        if not NS.isHealer("player") and not NS.noHealersInGroup() then
+          shouldShowFrame = true
         end
       else
-        if NS.db.global.test then
-          TextFrame:Show()
-        else
-          TextFrame:Hide()
+        if not NS.noHealersInGroup() then
+          shouldShowFrame = true
         end
       end
-    else
-      if NS.db.global.test then
-        TextFrame:Show()
+    end
+  else -- not IsInInstance()
+    if NS.db.global.showOutside and NS.isInGroup() and not NS.isDead("player") then
+      if NS.db.global.healer then
+        if not NS.isHealer("player") and not NS.noHealersInGroup() then
+          shouldShowFrame = true
+        end
       else
-        if NS.db.global.showOutside then
-          if NS.isInGroup() then
-            if NS.isDead("player") then
-              TextFrame:Hide()
-            else
-              if NS.db.global.healer then
-                if NS.isHealer("player") then
-                  TextFrame:Hide()
-                else
-                  if NS.noHealersInGroup() then
-                    TextFrame:Hide()
-                  else
-                    TextFrame:Show()
-                  end
-                end
-              else
-                if NS.noHealersInGroup() then
-                  TextFrame:Hide()
-                else
-                  TextFrame:Show()
-                end
-              end
-            end
-          else
-            if NS.db.global.test then
-              TextFrame:Show()
-            else
-              TextFrame:Hide()
-            end
-          end
+        if not NS.noHealersInGroup() then
+          shouldShowFrame = true
         end
       end
     end
   end
-end
 
-function Interface:ShowText(value)
-  if NS.isInGroup() then
-    if value then
-      Interface.textFrame:Show()
-
-      if NS.isDead("player") then
-        Interface.textFrame:SetAlpha(0)
-      else
-        if NS.db.global.healer then
-          if NS.isHealer("player") then
-            Interface.textFrame:SetAlpha(0)
-          else
-            if NS.noHealersInGroup() then
-              Interface.textFrame:SetAlpha(0)
-            else
-              Interface.textFrame:SetAlpha(1)
-            end
-          end
-        else
-          if NS.noHealersInGroup() then
-            Interface.textFrame:SetAlpha(0)
-          else
-            Interface.textFrame:SetAlpha(1)
-          end
-        end
-      end
-    else
-      Interface.textFrame:SetAlpha(0)
-    end
+  if shouldShowFrame then
+    frame:Show()
+    -- Delegate final alpha setting to NS.ToggleVisibility, which handles SetAlphaFromBoolean
+    NS.ToggleVisibility(NS.isHealerInRange(), NS.db.global.reverse)
   else
-    if NS.db.global.test then
-      Interface.textFrame:Show()
-      Interface.textFrame:SetAlpha(1)
-    else
-      Interface.textFrame:SetAlpha(0)
-    end
+    frame:Hide()
+    frame:SetAlpha(0) -- Ensure it is fully transparent when hidden
   end
 end

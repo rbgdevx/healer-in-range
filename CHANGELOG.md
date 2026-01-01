@@ -1,5 +1,12 @@
 # Healer In Range
 
+## [v1.2.0](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.2.0) (2026-01-01)
+
+- Updating libs for midnight
+- Overhauling how the text is shown to work with the new secret value system
+- Handling secret values for moving frames while in-combat or in instances
+- Updating settings
+
 ## [v1.1.10](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.1.10) (2025-08-26)
 
 - Update toc

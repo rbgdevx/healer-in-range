@@ -20,14 +20,13 @@ local CreateFrame = CreateFrame
 ---@field reverse boolean
 ---@field healer boolean
 ---@field showOutside boolean
----@field fontsize number
+---@field fontSize number
 ---@field font string
 ---@field enableRange boolean
 ---@field rangeOperator string
 ---@field range string
 ---@field color ColorArray
 ---@field position PositionArray
----@field debug boolean
 
 ---@class DBTable : table
 ---@field global GlobalTable
@@ -62,11 +61,11 @@ NS.DefaultDatabase = {
     test = true,
     reverse = false,
     healer = true,
-    showOutside = false,
-    fontsize = 30,
+    showOutside = true,
+    fontSize = 24,
     font = "Friz Quadrata TT",
     enableRange = false,
-    range = "",
+    range = "25",
     rangeOperator = "<=",
     color = {
       r = 1,
@@ -80,6 +79,5 @@ NS.DefaultDatabase = {
       0,
       0,
     },
-    debug = false,
   },
 }
