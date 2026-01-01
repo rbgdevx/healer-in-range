@@ -83,7 +83,7 @@ NS.IterateGroupMembers = function(reversed, forceParty)
 end
 
 -- function NS.GetRange(unit, checkVisible)
--- 	return LibRangeCheck:GetRange(unit, checkVisible)
+--   return LibRangeCheck:GetRange(unit, checkVisible)
 -- end
 
 -- function NS.CheckRange(unit, range, operator)
@@ -180,22 +180,22 @@ NS.isHealerInRange = function()
 
           -- Optional debug: show both squared values and yard values for intuition.
           -- print(
-          -- 	"HIR custom-range:",
-          -- 	unit,
-          -- 	"dist^2=",
-          -- 	distanceSquared,
-          -- 	"(~",
-          -- 	NS.SquaredToYards(distanceSquared),
-          -- 	"yd)",
-          -- 	"threshold^2=",
-          -- 	rangeSquared,
-          -- 	"(=",
-          -- 	tonumber(NS.db.global.range),
-          -- 	"yd)",
-          -- 	"inRange=",
-          -- 	inRangeCustom,
-          -- 	"count=",
-          -- 	count
+          --   "HIR custom-range:",
+          --   unit,
+          --   "dist^2=",
+          --   distanceSquared,
+          --   "(~",
+          --   NS.SquaredToYards(distanceSquared),
+          --   "yd)",
+          --   "threshold^2=",
+          --   rangeSquared,
+          --   "(=",
+          --   tonumber(NS.db.global.range),
+          --   "yd)",
+          --   "inRange=",
+          --   inRangeCustom,
+          --   "count=",
+          --   count
           -- )
         end
       end
