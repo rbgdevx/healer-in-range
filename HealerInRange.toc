@@ -1,6 +1,6 @@
 ## Interface: 120001, 120000, 110207
 ## Title: Healer In Range
-## Version: 1.2.0
+## Version: 1.2.1
 ## Author: RBGDEV
 ## Notes: Shows text if you're in or out of range of a healer
 ## IconTexture: Interface/AddOns/HealerInRange/logo.tga

@@ -26,6 +26,14 @@ local sformat = string.format
 local SharedMedia = LibStub("LibSharedMedia-3.0")
 -- local LibRangeCheck = LibStub("LibRangeCheck-3.0")
 
+-- Retail provides a global SetAlphaFromBoolean(frame, value, trueAlpha, falseAlpha) helper
+-- which is safe to use with "secret values" (e.g. from UnitInRange). Classic/older clients
+-- may not have it, so provide a simple fallback.
+local SetAlphaFromBoolean = _G.SetAlphaFromBoolean
+  or function(frame, value, trueAlpha, falseAlpha)
+    frame:SetAlpha(value and trueAlpha or falseAlpha)
+  end
+
 NS.trim = function(str)
   return str:gsub("^%s*(.-)%s*$", "%1")
 end
@@ -276,7 +284,7 @@ NS.ToggleVisibility = function(inRange, reverse)
       alphaWhenFalse = 0
     end
 
-    frame:SetAlphaFromBoolean(inRange, alphaWhenTrue, alphaWhenFalse)
+    SetAlphaFromBoolean(frame, inRange, alphaWhenTrue, alphaWhenFalse)
     frame:Show()
   end
 end
