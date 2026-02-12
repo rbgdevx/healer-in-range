@@ -26,7 +26,7 @@ do
 
       local inRange = NS.isHealerInRange()
 
-      if healerInRangeFrame and healerInRangeFrame.inRange ~= inRange then
+      if healerInRangeFrame then
         healerInRangeFrame.inRange = inRange
         Interface.inRange = inRange
 

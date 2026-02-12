@@ -29,10 +29,15 @@ local SharedMedia = LibStub("LibSharedMedia-3.0")
 -- Retail provides a global SetAlphaFromBoolean(frame, value, trueAlpha, falseAlpha) helper
 -- which is safe to use with "secret values" (e.g. from UnitInRange). Classic/older clients
 -- may not have it, so provide a simple fallback.
-local SetAlphaFromBoolean = _G.SetAlphaFromBoolean
-  or function(frame, value, trueAlpha, falseAlpha)
+local function SetAlphaFromBoolean(frame, value, trueAlpha, falseAlpha)
+  if frame.SetAlphaFromBoolean then
+    frame:SetAlphaFromBoolean(value, trueAlpha, falseAlpha)
+  elseif _G.SetAlphaFromBoolean then
+    _G.SetAlphaFromBoolean(frame, value, trueAlpha, falseAlpha)
+  else
     frame:SetAlpha(value and trueAlpha or falseAlpha)
   end
+end
 
 NS.trim = function(str)
   return str:gsub("^%s*(.-)%s*$", "%1")
