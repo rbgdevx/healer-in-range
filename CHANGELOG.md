@@ -1,5 +1,9 @@
 # Healer In Range
 
+## [v1.2.3](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.2.3) (2026-04-22)
+
+- Update toc
+
 ## [v1.2.2](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.2.2) (2026-02-11)
 
 - Fixing new midnight api bugs
