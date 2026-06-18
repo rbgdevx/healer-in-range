@@ -55,7 +55,7 @@ end
 function Interface:AddControls(frame)
   frame:EnableMouse(true)
   frame:SetScript("OnMouseUp", function(_, btn)
-    if NS.db.global.lock == false and not IsInInstance() and self:CanInteractWithFrame(frame) then
+    if NS.db.global.lock == false and not IsInInstance() and CanInteractWithFrame(frame) then
       if btn == "RightButton" then
         AceConfigDialog:Open(AddonName)
       end

@@ -1,5 +1,10 @@
 # Healer In Range
 
+## [v1.2.4](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.2.4) (2026-06-17)
+
+- Update toc
+- Cleanup
+
 ## [v1.2.3](https://github.com/rbgdevx/healer-in-range/releases/tag/v1.2.3) (2026-04-22)
 
 - Update toc
